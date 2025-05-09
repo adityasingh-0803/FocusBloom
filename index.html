@@ -10,20 +10,13 @@
       background-color: #f0fff4;
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
-      padding: 20px;
+      padding: 30px 20px;
       color: #1a202c;
     }
 
     h1 {
       font-size: 2.5em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    h1 img {
-      height: 32px;
-      margin-right: 10px;
+      margin-bottom: 10px;
     }
 
     #description {
@@ -37,54 +30,79 @@
     }
 
     .button {
-      font-size: 1.2em;
-      margin: 10px 5px;
-      padding: 10px 20px;
+      font-size: 1.1em;
+      margin: 10px 8px;
+      padding: 10px 24px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     .start { background-color: #38a169; }
     .pause { background-color: #d69e2e; }
     .reset { background-color: #e53e3e; }
 
-    #garden {
-      font-size: 1.5em;
+    #garden-section {
       margin-top: 40px;
+    }
+
+    #garden-label {
+      font-size: 1.6em;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin-bottom: 10px;
     }
 
-    #garden img {
-      margin-right: 10px;
+    #garden-label span {
+      margin-left: 8px;
+      font-weight: bold;
+    }
+
+    #flowers {
+      font-size: 2em;
+      margin-bottom: 10px;
     }
 
     #stats {
       background-color: #ffffff;
       border-radius: 12px;
-      margin-top: 30px;
+      margin-top: 20px;
       padding: 20px;
-      width: 300px;
+      width: 100%;
+      max-width: 340px;
       margin-left: auto;
       margin-right: auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     }
 
     #stats h2 {
-      margin-top: 0;
+      margin: 0 0 15px;
     }
 
-    .flower {
-      font-size: 2em;
+    #stats p {
+      margin: 8px 0;
+      font-size: 1em;
+    }
+
+    #stats em {
+      display: block;
+      margin-top: 10px;
+      font-size: 0.95em;
+      color: #4a5568;
+    }
+
+    @media (max-width: 500px) {
+      #timer { font-size: 3em; }
+      .button { padding: 8px 16px; }
     }
   </style>
 </head>
 <body>
 
-  <h1><img src="favicon.ico" alt="Flower"> FocusBloom</h1>
+  <h1>🌼 FocusBloom</h1>
   <div id="description">Each focused session grows a flower. Let your garden bloom.</div>
 
   <div id="timer">25:00</div>
@@ -93,15 +111,16 @@
   <button class="button pause" onclick="pauseTimer()">Pause</button>
   <button class="button reset" onclick="resetTimer()">Reset</button>
 
-  <div id="garden">
-    🌿 <strong>Your Garden</strong> &nbsp; <span id="flowers" class="flower">🌸</span>
-  </div>
+  <div id="garden-section">
+    <div id="garden-label">🌿 <span>Your Garden</span></div>
+    <div id="flowers">🌸</div>
 
-  <div id="stats">
-    <h2>Session Stats</h2>
-    <p><strong>Sessions:</strong> <span id="sessionCount">0</span></p>
-    <p><strong>Total Focus Time:</strong> <span id="totalTime">0</span> min</p>
-    <p><em>“One flower at a time!”</em></p>
+    <div id="stats">
+      <h2>Session Stats</h2>
+      <p><strong>Sessions:</strong> <span id="sessionCount">0</span></p>
+      <p><strong>Total Focus Time:</strong> <span id="totalTime">0</span> min</p>
+      <em>“One flower at a time!”</em>
+    </div>
   </div>
 
   <script>
