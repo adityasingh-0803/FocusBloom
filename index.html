@@ -2,101 +2,159 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FocusBloom</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="favicon.ico" />
   <style>
-    .flower {
-      transition: transform 0.4s ease;
+    body {
+      background-color: #f0fff4;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 20px;
+      color: #1a202c;
     }
-    .flower:hover {
-      transform: scale(1.1);
+
+    h1 {
+      font-size: 2.5em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h1 img {
+      height: 32px;
+      margin-right: 10px;
+    }
+
+    #description {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+    }
+
+    #timer {
+      font-size: 4em;
+      margin: 20px 0;
+    }
+
+    .button {
+      font-size: 1.2em;
+      margin: 10px 5px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: white;
+    }
+
+    .start { background-color: #38a169; }
+    .pause { background-color: #d69e2e; }
+    .reset { background-color: #e53e3e; }
+
+    #garden {
+      font-size: 1.5em;
+      margin-top: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #garden img {
+      margin-right: 10px;
+    }
+
+    #stats {
+      background-color: #ffffff;
+      border-radius: 12px;
+      margin-top: 30px;
+      padding: 20px;
+      width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    #stats h2 {
+      margin-top: 0;
+    }
+
+    .flower {
+      font-size: 2em;
     }
   </style>
 </head>
-<body class="bg-green-50 text-gray-800 font-sans p-6">
-  <div class="max-w-xl mx-auto text-center">
-    <h1 class="text-4xl font-bold mb-4">🌸 FocusBloom</h1>
-    <p class="mb-6">Each focused session grows a flower. Let your garden bloom.</p>
+<body>
 
-    <!-- Timer -->
-    <div class="text-6xl font-mono mb-4" id="timer">25:00</div>
-    <div class="flex justify-center gap-4 mb-6">
-      <button onclick="startTimer()" class="bg-green-500 text-white px-4 py-2 rounded">Start</button>
-      <button onclick="pauseTimer()" class="bg-yellow-500 text-white px-4 py-2 rounded">Pause</button>
-      <button onclick="resetTimer()" class="bg-red-500 text-white px-4 py-2 rounded">Reset</button>
-    </div>
+  <h1><img src="favicon.ico" alt="Flower"> FocusBloom</h1>
+  <div id="description">Each focused session grows a flower. Let your garden bloom.</div>
 
-    <!-- Mood Picker -->
-    <div id="moodPicker" class="hidden mb-6">
-      <p class="mb-2 font-semibold">How did you feel?</p>
-      <div class="flex justify-center gap-4">
-        <button onclick="logMood('happy')">😊</button>
-        <button onclick="logMood('neutral')">😐</button>
-        <button onclick="logMood('tired')">😫</button>
-      </div>
-    </div>
+  <div id="timer">25:00</div>
 
-    <!-- Garden -->
-    <h2 class="text-xl font-semibold mt-10 mb-4">🌿 Your Garden</h2>
-    <div id="garden" class="flex flex-wrap gap-2 justify-center"></div>
+  <button class="button start" onclick="startTimer()">Start</button>
+  <button class="button pause" onclick="pauseTimer()">Pause</button>
+  <button class="button reset" onclick="resetTimer()">Reset</button>
+
+  <div id="garden">
+    🌿 <strong>Your Garden</strong> &nbsp; <span id="flowers" class="flower">🌸</span>
+  </div>
+
+  <div id="stats">
+    <h2>Session Stats</h2>
+    <p><strong>Sessions:</strong> <span id="sessionCount">0</span></p>
+    <p><strong>Total Focus Time:</strong> <span id="totalTime">0</span> min</p>
+    <p><em>“One flower at a time!”</em></p>
   </div>
 
   <script>
     let timer;
-    let totalTime = 25 * 60;
-    let remaining = totalTime;
-    const timerEl = document.getElementById("timer");
+    let timeLeft = 1500; // 25 minutes
+    let isRunning = false;
+    let sessionCount = 0;
+    let totalMinutes = 0;
 
-    function updateTimer() {
-      const min = String(Math.floor(remaining / 60)).padStart(2, '0');
-      const sec = String(remaining % 60).padStart(2, '0');
-      timerEl.textContent = `${min}:${sec}`;
+    function updateDisplay() {
+      const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+      const seconds = (timeLeft % 60).toString().padStart(2, '0');
+      document.getElementById('timer').innerText = `${minutes}:${seconds}`;
     }
 
     function startTimer() {
-      if (timer) return;
+      if (isRunning) return;
+      isRunning = true;
       timer = setInterval(() => {
-        if (remaining > 0) {
-          remaining--;
-          updateTimer();
-        } else {
+        timeLeft--;
+        updateDisplay();
+        if (timeLeft <= 0) {
           clearInterval(timer);
-          timer = null;
-          document.getElementById("moodPicker").classList.remove("hidden");
+          isRunning = false;
+          timeLeft = 1500;
+          updateDisplay();
+          growFlower();
         }
       }, 1000);
     }
 
     function pauseTimer() {
       clearInterval(timer);
-      timer = null;
+      isRunning = false;
     }
 
     function resetTimer() {
-      pauseTimer();
-      remaining = totalTime;
-      updateTimer();
-      document.getElementById("moodPicker").classList.add("hidden");
+      clearInterval(timer);
+      isRunning = false;
+      timeLeft = 1500;
+      updateDisplay();
     }
 
-    function logMood(mood) {
-      const garden = document.getElementById("garden");
-      const flower = document.createElement("div");
-      flower.className = "flower text-3xl";
-      flower.innerText = mood === 'happy' ? '🌺' : mood === 'neutral' ? '🌼' : '🌾';
-      garden.appendChild(flower);
-      localStorage.setItem("garden", garden.innerHTML);
-      resetTimer();
+    function growFlower() {
+      sessionCount++;
+      totalMinutes += 25;
+      document.getElementById('flowers').innerText += '🌸';
+      document.getElementById('sessionCount').innerText = sessionCount;
+      document.getElementById('totalTime').innerText = totalMinutes;
     }
 
-    function restoreGarden() {
-      const saved = localStorage.getItem("garden");
-      if (saved) document.getElementById("garden").innerHTML = saved;
-    }
-
-    updateTimer();
-    restoreGarden();
+    updateDisplay();
   </script>
+
 </body>
 </html>
